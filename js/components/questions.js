@@ -27,20 +27,21 @@ class Questions extends React.Component {
         this.props.clearQuestions()
     }
     componentDidMount(){
-        if(this.state.movies.length>0){
-            this.generateQuestion("title")
-        }
+        this.init()
     }
     componentWillReceiveProps(nextProps){
-        if(!_.isEqual(this.props.movies,nextProps.movies)){
-            if(nextProps.movies.length>0){
-                this.setState({
-                    original_movies: nextProps.movies,
-                    movies: _.chunk(_.shuffle(nextProps.movies),4)
-                },()=>{
-                    this.generateQuestion("title")
-                })
-            }
+        if(this.props.movie_page!==nextProps.movie_page||this.props.details_loaded!==nextProps.details_loaded||this.props.category_id!==nextProps.category_id){
+            this.init()
+        }
+    }
+    init(){
+        if(this.props.movies.length>0){
+            this.setState({
+                original_movies: this.props.movies,
+                movies: _.chunk(_.shuffle(this.props.movies),4)
+            },()=>{
+                this.generateQuestionType()
+            })
         }
     }
     generateQuestion(type){
@@ -52,14 +53,62 @@ class Questions extends React.Component {
                 question = {
                     id: this.props.questions.length+1,
                     type: type,
-                    text: "What is the name of this movie?",
+                    text: `What is the name of this ${(this.props.game.type==='movie')?'movie':'tv show'}?`,
                     correct: null,
                     assigned_player: this.props.activePlayer,
-                    answer: selected_movie.original_title,
+                    answer: (this.props.game.type==='movie')?selected_movie.original_title:selected_movie.original_name,
                     selected_movie: selected_movie,
                     answered: false,
                     choice_options: selected_chunk.map((m)=>{
-                                return m.original_title
+                                return (this.props.game.type==='movie')?m.original_title:m.original_name
+                            })
+                }
+                break;
+            }
+            case "summary":{
+                question = {
+                    id: this.props.questions.length+1,
+                    type: type,
+                    text: `Which summary best describes this ${(this.props.game.type==='movie')?'movie':'tv show'}?`,
+                    correct: null,
+                    assigned_player: this.props.activePlayer,
+                    answer: selected_movie.overview,
+                    selected_movie: selected_movie,
+                    answered: false,
+                    choice_options: selected_chunk.map((m)=>{
+                                return m.overview
+                            })
+                }
+                break;
+            }
+            case "cast":{
+                question = {
+                    id: this.props.questions.length+1,
+                    type: type,
+                    text: `Who is a lead actor in this ${(this.props.game.type==='movie')?'movie':'tv show'}?`,
+                    correct: null,
+                    assigned_player: this.props.activePlayer,
+                    answer: _.get(selected_movie,'cast[0].name'),
+                    selected_movie: selected_movie,
+                    answered: false,
+                    choice_options: selected_chunk.map((m)=>{
+                                return _.get(m,'cast[0]name')
+                            })
+                }
+                break;
+            }
+            case "character":{
+                question = {
+                    id: this.props.questions.length+1,
+                    type: type,
+                    text: `Who is a lead character in this ${(this.props.game.type==='movie')?'movie':'tv show'}?`,
+                    correct: null,
+                    assigned_player: this.props.activePlayer,
+                    answer: this.formatCharacterName(selected_movie),
+                    selected_movie: selected_movie,
+                    answered: false,
+                    choice_options: selected_chunk.map((m)=>{
+                                return this.formatCharacterName(m)
                             })
                 }
                 break;
@@ -70,13 +119,18 @@ class Questions extends React.Component {
         })
         this.props.createQuestion(question);
     }
+    formatCharacterName(selected_movie){
+        return (_.get(selected_movie,'cast[0].character.toLowerCase().indexOf("himself")')>-1||_.get(selected_movie,'cast[0].character.toLowerCase().indexOf("herself")')>-1||_.get(selected_movie,'cast[0].character.toLowerCase().indexOf("narrator")')>-1)?
+        _.get(selected_movie,'cast[0].name')
+        : _.get(selected_movie,'cast[0].character')
+    }
     updateQuestionsAnswered(question){
         this.setState({
             questions_answered: this.state.questions_answered+1
         },()=>{
             this.props.updateQuestion(question)
             if(this.state.questions_created<this.props.qty){
-                this.generateQuestion("title")
+                this.generateQuestionType()
             }else{
                 setTimeout(()=>{
                     this.tallyFinalScore()
@@ -96,12 +150,16 @@ class Questions extends React.Component {
     playAgain(){
         browserHistory.push("/categories")
     }
+    generateQuestionType(){
+        let questionTypes = ["title","summary","cast","character"]
+        this.generateQuestion(_.shuffle(questionTypes)[0])
+    }
     render(){
         let unanswered_questions = this.props.questions.filter((q)=>{
             return !q.answered
         }),
         questions = unanswered_questions.map((q,key)=>{
-            return <Question question={q} updateQuestionsAnswered={this.updateQuestionsAnswered} key={key}/>
+            return <Question question={q} updateQuestionsAnswered={this.updateQuestionsAnswered} difficulty={this.props.game.difficulty} key={key}/>
         });
         
         return (
@@ -144,11 +202,10 @@ class Question extends React.Component {
     render(){
         let q = this.props.question,
             options = q.choice_options.map((o,i)=>{
-                return <button className="btn-lg btn-info option-btn text-center" style={{margin:'5px'}} onClick={(e)=>this.setState({answer: o})} key={o}>{o}</button>
+                return <button className="btn-lg btn-info option-btn text-center" style={{margin:'5px'}} onClick={(e)=>this.setState({answer: o})} key={o+i}>{o}</button>
             }),
-            difficulty = localStorage.getItem('difficulty'),
             text_question;
-        switch(difficulty){
+        switch(this.props.difficulty){
             case "easy":{
                 text_question = false
                 break;
@@ -176,7 +233,6 @@ class Question extends React.Component {
                     {(q.selected_movie.backdrop_path||text_question)?
                         <img src={`${IMAGE_BASE_BACKDROP}${q.selected_movie.backdrop_path}`} style={{width:'65%',display:'block',margin:'0 auto'}}/>
                     : <p style={{display:'block',margin:'auto',textAlign:'center'}}>{q.selected_movie.overview}</p>}
-                    <br/>
                     <form className="form-group" onSubmit={this.handleSubmit}>
                         <h3 className="text-center">{q.text}</h3>
                         <div className="options-cont">
@@ -190,7 +246,8 @@ class Question extends React.Component {
 }
 Question.propTypes = {
     question: React.PropTypes.object,
-    updateQuestionsAnswered: React.PropTypes.func
+    updateQuestionsAnswered: React.PropTypes.func,
+    difficulty: React.PropTypes.string
 }
 class QuestionGallery extends React.Component {
     constructor(){
@@ -199,7 +256,7 @@ class QuestionGallery extends React.Component {
     }
     render(){
         let posters = this.props.questions.map((q,key)=>{
-            return <Poster movie={q.selected_movie} correct={q.correct} key={key}/>
+            return <Poster movie={q.selected_movie} correct={q.correct} answer={q.answer} key={key}/>
         })
         return(
             <div className="col-md-12 col-sm-12" style={{marginBottom:'90px'}}>
@@ -210,7 +267,8 @@ class QuestionGallery extends React.Component {
 }
 function mapStateToProps(state){
     return {
-        questions: state.questions
+        questions: state.questions,
+        game: state.game
     }
 }
 function mapDispatchToProps(dispatch){

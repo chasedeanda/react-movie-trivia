@@ -9,7 +9,7 @@ const reducers = combineReducers({
   movies: moviesReducer,
   genres: genreReducer,
   players: playersReducer,
-  currentGame: gameReducer,
+  game: gameReducer,
   questions: questionReducer
 });
 

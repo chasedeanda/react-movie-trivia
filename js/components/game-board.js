@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import {bindActionCreators} from 'redux';
 import _ from 'lodash';
 
-import {loadMoviesByGenre} from '../actions'
+import {loadMoviesByGenre, loadTVByGenre} from '../actions'
 
 import Questions from './questions'
 
@@ -17,9 +17,14 @@ class GameBoard extends React.Component {
         }
     }
     componentWillMount(){
-        let difficulty = localStorage.getItem('difficulty') || 'normal',
-            page;
-        switch(difficulty){
+        this.loadMovies()
+    }
+    componentWillUnmount(){
+        this.props.clearMovies()
+    }
+    loadMovies(){
+        let page;
+        switch(this.props.game.difficulty){
             case 'easy':{
                 page = 1
                 break;
@@ -37,15 +42,34 @@ class GameBoard extends React.Component {
                 break;
             }
         }
-        this.props.loadMoviesByGenre(this.props.routeParams.category_id, page)
+        if(this.props.game.type==='movie'){
+            this.props.loadMoviesByGenre(this.props.routeParams.category_id, page)
+        }else{
+            this.props.loadTVByGenre(this.props.routeParams.category_id, page)
+        }
     }
-    componentWillUnmount(){
-        this.props.clearMovies()
+    retry(){
+        this.loadMovies()
     }
     render(){
+        let content;
+        switch(this.props.movie_status){
+            case "failed":{
+                content = <button className="btn-lg btn-danger col-md-6 col-sm-6 center-block" onClick={this.retry}>Retry</button>;
+                break;
+            }
+            case "complete":{
+                content = <Questions movies={this.props.movies} movie_page={this.props.page} qty={this.state.qty} details_loaded={this.props.details_loaded} activePlayer={1}/>;
+                break;
+            }
+            default:{
+                content = null
+                break;
+            }
+        }
         return(
             <div className="game-board">
-                <Questions movies={this.props.movies} qty={this.state.qty} activePlayer={1}/>
+                {content}
             </div>
         )
     }
@@ -58,13 +82,18 @@ GameBoard.defaultProps = {
 }
 function mapStateToProps(state) {
     return{
-        movies: state.movies.movies
+        movies: state.movies.movies,
+        movie_status: state.movies.status,
+        page: state.movies.page,
+        details_loaded: state.movies.details_loaded,
+        game: state.game
     }
 }
 
 function mapDispatchToProps(dispatch) {
     return bindActionCreators({
         loadMoviesByGenre: loadMoviesByGenre,
+        loadTVByGenre: loadTVByGenre,
         clearMovies:()=>dispatch({type:"CLEAR_MOVIES",payload:[]})}
         ,dispatch)
 }

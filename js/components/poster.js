@@ -9,16 +9,18 @@ class Poster extends React.Component{
       <div style={{marginTop:'30px'}}>
         <div className="movie clearfix">
           <div className="img" style={{backgroundImage:`url(${IMAGE_BASE_POSTER}${this.props.movie.poster_path})`}}/>
-          <h3 style={{position:'relative',top:'10px'}}>
+          <h3 style={{position:'relative',top:'10px',textAlign:'center'}}>
             {(this.props.correct)?
             <span>
                 Correct&nbsp;
                 <span className="glyphicon glyphicon-ok" style={{color:'green',position:'relative',top:'2px',left:'6px'}}></span>
+                <span className="answer">Answer: <em>{this.props.answer}</em></span>
             </span>
             :
             <span>
                 Wrong&nbsp;
                 <span className="glyphicon glyphicon-remove" style={{color:'red',position:'relative',top:'6px',left:'6px'}}></span>
+                <span className="answer">Answer: <em>{this.props.answer}</em></span>
             </span>}
             </h3>
         </div>

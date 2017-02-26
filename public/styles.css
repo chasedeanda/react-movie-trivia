@@ -54,7 +54,13 @@ body {
 
 .genre-btn {
   margin: 5px;
-  width: 140px; }
+  width: 190px;
+  padding: 30px; }
+
+.genre-cont {
+  width: 69%;
+  margin: 20px auto;
+  margin-bottom: 80px; }
 
 .form-control {
   margin-bottom: 10px; }
@@ -78,6 +84,14 @@ body {
   font-size: 20px;
   font-weight: bold;
   padding: 15px 15px; }
+
+.answer {
+  display: block;
+  margin-top: 10px;
+  font-size: 13px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap; }
 .left10 {
   margin-left: 10px; }
 @media screen and (max-width: 768px) {

@@ -4,7 +4,7 @@ import {bindActionCreators} from 'redux';
 import autoBind from 'react-autobind';
 import {browserHistory} from 'react-router';
 
-import { loadGenres } from '../actions';
+import { loadMovieGenres, loadTVGenres } from '../actions';
 
 class Categories extends React.Component{
     constructor(){
@@ -12,7 +12,12 @@ class Categories extends React.Component{
         autoBind(this);
     }
     componentWillMount(){
-        this.props.loadGenres()
+        if(this.props.game.type==='movie'){
+            this.props.loadMovieGenres()
+        }else{
+            this.props.loadTVGenres()
+        }
+        
     }
     handleCategoryClick(category_id){
         browserHistory.push(`/categories/${category_id}`)
@@ -26,7 +31,7 @@ class Categories extends React.Component{
                 <div className="center-block text-center">
                     <h1>Movie Trivia</h1>
                     <span>Select a category</span><br/>
-                    <div className="col-md-10 col-sm-10 center-block">
+                    <div className="genre-cont">
                      {categories}
                     </div>
                 </div>
@@ -36,19 +41,24 @@ class Categories extends React.Component{
 }
 
 Categories.propTypes = {
-    genres: React.PropTypes.array
+    genres: React.PropTypes.array,
+    game: React.PropTypes.object
 }
 Categories.defaultProps = {
     genres: []
 }
 function mapStateToProps(state) {
     return{
-        genres: state.genres.genres
+        genres: state.genres.genres,
+        game: state.game
     }
 }
 
 function mapDispatchToProps(dispatch) {
-    return bindActionCreators({loadGenres: loadGenres},dispatch)
+    return bindActionCreators({
+        loadMovieGenres: loadMovieGenres,
+        loadTVGenres: loadTVGenres
+    },dispatch)
 }
 
 export default connect(mapStateToProps,mapDispatchToProps)(Categories);

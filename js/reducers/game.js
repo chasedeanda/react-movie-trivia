@@ -1,13 +1,17 @@
 const initialState = {
-    round: 1,
-    player1Score: 0,
-    player2Score: 0
+    difficulty: 'easy'
 }
 
 const gameReducer = (state=initialState,action) =>{
-    // switch(action.type){
-
-    // }
+    switch(action.type){
+        case "START_NEW_GAME":{
+            state = {
+                difficulty: action.payload.difficulty,
+                type: action.payload.type
+            }
+            break;
+        }
+    }
     return state
 }
 
