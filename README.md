@@ -1,11 +1,12 @@
 # react-movie-trivia
 ***To Run:***
 - Download or clone repo
-- In the terminal run:
+- Run:
 ```
 npm install
 npm run dev
 ```
+- Navigate to localhost:8000 in your browser
 ## Screenshots
 ![screenshot 3](https://cloud.githubusercontent.com/assets/8203134/23344158/1efc6152-fc3d-11e6-9a72-02bd6fb0c30b.png)
 ![screenshot 4](https://cloud.githubusercontent.com/assets/8203134/23344159/1f087834-fc3d-11e6-8e75-7486efa51f0b.png)
