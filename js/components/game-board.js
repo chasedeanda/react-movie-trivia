@@ -12,6 +12,9 @@ class GameBoard extends React.Component {
     constructor(){
         super()
         autoBind(this)
+        this.state = {
+            qty: 5
+        }
     }
     componentWillMount(){
         let difficulty = localStorage.getItem('difficulty') || 'normal',
@@ -42,7 +45,7 @@ class GameBoard extends React.Component {
     render(){
         return(
             <div className="game-board">
-                <Questions movies={this.props.movies} qty={5} activePlayer={1}/>
+                <Questions movies={this.props.movies} qty={this.state.qty} activePlayer={1}/>
             </div>
         )
     }
