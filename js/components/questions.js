@@ -2,11 +2,14 @@ import React from 'react';
 import autoBind from 'react-autobind';
 import { connect } from 'react-redux';
 import {bindActionCreators} from 'redux';
+import {browserHistory} from 'react-router';
 import _ from 'lodash';
 import * as CONSTANTS from '../constants.js';
 const { IMAGE_BASE_BACKDROP,IMAGE_BASE_POSTER } = CONSTANTS;
 
 import {getMovie} from '../actions';
+
+import Poster from './poster';
 
 class Questions extends React.Component {
     constructor(){
@@ -47,6 +50,7 @@ class Questions extends React.Component {
         switch(type){
             case "title":{
                 question = {
+                    id: this.props.questions.length+1,
                     type: type,
                     text: "What is the name of this movie?",
                     correct: null,
@@ -89,6 +93,9 @@ class Questions extends React.Component {
             player_score: correct
         })
     }
+    playAgain(){
+        browserHistory.push("/categories")
+    }
     render(){
         let unanswered_questions = this.props.questions.filter((q)=>{
             return !q.answered
@@ -104,6 +111,8 @@ class Questions extends React.Component {
                 :
                     <div>
                         <h1 className="text-center">You got {this.state.player_score} out {this.props.qty} correct</h1>
+                        <QuestionGallery questions={this.props.questions}/>
+                        <button className="btn-lg btn-success center-block" onClick={this.playAgain}>Play Again</button>
                     </div>}
             </div>
         )
@@ -136,11 +145,38 @@ class Question extends React.Component {
         let q = this.props.question,
             options = q.choice_options.map((o,i)=>{
                 return <button className="btn-lg btn-info option-btn text-center" style={{margin:'5px'}} onClick={(e)=>this.setState({answer: o})} key={o}>{o}</button>
-            })
+            }),
+            difficulty = localStorage.getItem('difficulty'),
+            text_question;
+        switch(difficulty){
+            case "easy":{
+                text_question = false
+                break;
+            }
+            case "normal":{
+                text_question = (Math.floor((Math.random() * 64) + 1)===64)
+                break;
+            }
+            case "hard":{
+                text_question = (Math.floor((Math.random() * 24) + 1)===24)
+                break;
+            }
+            case "extreme":{
+                text_question = (Math.floor((Math.random() * 8) + 1)===8)
+                break;
+            }
+            default:{
+                text_question = false;
+                break;
+            }
+        }
         return (
             <div>   
                 <div className="col-md-10 center-block">
-                    <img src={`${IMAGE_BASE_BACKDROP}${q.selected_movie.backdrop_path}`} style={{width:'65%',display:'block',margin:'0 auto'}}/><br/>
+                    {(q.selected_movie.backdrop_path||text_question)?
+                        <img src={`${IMAGE_BASE_BACKDROP}${q.selected_movie.backdrop_path}`} style={{width:'65%',display:'block',margin:'0 auto'}}/>
+                    : <p style={{display:'block',margin:'auto',textAlign:'center'}}>{q.selected_movie.overview}</p>}
+                    <br/>
                     <form className="form-group" onSubmit={this.handleSubmit}>
                         <h3 className="text-center">{q.text}</h3>
                         <div className="options-cont">
@@ -155,6 +191,22 @@ class Question extends React.Component {
 Question.propTypes = {
     question: React.PropTypes.object,
     updateQuestionsAnswered: React.PropTypes.func
+}
+class QuestionGallery extends React.Component {
+    constructor(){
+        super()
+        autoBind(this)
+    }
+    render(){
+        let posters = this.props.questions.map((q,key)=>{
+            return <Poster movie={q.selected_movie} correct={q.correct} key={key}/>
+        })
+        return(
+            <div className="col-md-12 col-sm-12" style={{marginBottom:'90px'}}>
+                {posters}
+            </div>
+        )
+    }
 }
 function mapStateToProps(state){
     return {

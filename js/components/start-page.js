@@ -16,10 +16,12 @@ class StartPage extends React.Component{
             started: false
         };
     }
-    handleNewGame(){
+    handleNewGame(difficulty){
         this.setState({
-            started: true
+            started: true,
+            difficulty: difficulty
         })
+        localStorage.setItem('difficulty',difficulty)
     }
     render(){
         return(
@@ -27,8 +29,13 @@ class StartPage extends React.Component{
                 <div className="center-block">
                     <h1 className="text-center">Movie Trivia</h1>
                     {!this.state.started?
-                        <button className="btn-lg btn-success col-md-6 col-sm-6 center-block" onClick={this.handleNewGame}>New Game</button>
-                    :   <PlayerNameForm/>}
+                        <div className="col-md-6 col-sm-10 center-block" style={{marginTop:'30px'}}>
+                            <button className="btn btn-info col-md-12 col-sm-12 difficulty-btn" onClick={this.handleNewGame.bind(null,'easy')}>EASY</button>
+                            <button className="btn btn-primary col-md-12 col-sm-12 difficulty-btn" onClick={this.handleNewGame.bind(null,'normal')}>NORMAL</button>
+                            <button className="btn btn-warning col-md-12 col-sm-12 difficulty-btn" onClick={this.handleNewGame.bind(null,'hard')}>HARD</button>
+                            <button className="btn btn-danger col-md-12 col-sm-12 difficulty-btn" onClick={this.handleNewGame.bind(null,'extreme')}>EXPERT</button>
+                        </div>
+                    :   <PlayerNameForm difficulty={this.state.difficulty}/>}
                 </div>
             </div>
         )

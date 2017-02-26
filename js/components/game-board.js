@@ -14,7 +14,27 @@ class GameBoard extends React.Component {
         autoBind(this)
     }
     componentWillMount(){
-        this.props.loadMoviesByGenre(this.props.routeParams.category_id)
+        let difficulty = localStorage.getItem('difficulty') || 'normal',
+            page;
+        switch(difficulty){
+            case 'easy':{
+                page = 1
+                break;
+            }
+            case 'normal':{
+                page = Math.floor((Math.random() * 4) + 1)
+                break;
+            }
+            case 'hard':{
+                page = Math.floor((Math.random() * 100) + 1)
+                break;
+            }
+            case 'extreme':{
+                page = Math.floor((Math.random() * 225) + 1)
+                break;
+            }
+        }
+        this.props.loadMoviesByGenre(this.props.routeParams.category_id, page)
     }
     componentWillUnmount(){
         this.props.clearMovies()

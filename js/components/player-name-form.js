@@ -15,7 +15,7 @@ class PlayerNameForm extends React.Component{
         e.preventDefault();
         this.props.changePlayerName('1',this.refs.player1Name.value)
         this.props.changePlayerName('2',this.refs.player2Name.value)
-        browserHistory.push(`/categories`)
+        browserHistory.push(`/categories?difficulty=${this.props.difficulty}`)
     }
     render(){
         return(

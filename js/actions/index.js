@@ -51,9 +51,9 @@ export const changePlayerName = (player, name) => {
   }
 }
 
-export const loadMoviesByGenre = (genre_id) => {
+export const loadMoviesByGenre = (genre_id, pageNumber) => {
   return dispatch => {
-    return axios.get(`${API_BASE}/genre/${genre_id}/movies?api_key=${API_KEY}&language=en-US&include_adult=false&sort_by=created_at.asc`)
+    return axios.get(`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&language=en-US&region=us&sort_by=popularity.desc&include_adult=false&include_video=false&page=${pageNumber}&with_genres=${genre_id}`)
     .then(response => response.data.results)
     .then(movies => dispatch({type: 'LOAD_MOVIES_BY_GENRE_COMPLETED', payload: movies}))
   }
