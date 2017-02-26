@@ -34,3 +34,27 @@ export const getMovie = (id) =>{
     .then(movie => dispatch({type:"GET_MOVIE_COMPLETED",payload:[movie]}))
   }
 }
+
+export const loadGenres = () => {
+  return dispatch => {
+    dispatch({type: "FETCH_GENRES_STARTED"})
+    return axios.get(`${API_BASE}/genre/movie/list?api_key=${API_KEY}&language=en-US`)
+    .then(response => response.data.genres)
+    .then(genres => dispatch({type: "FETCH_GENRES_COMPLETED",payload:genres}))
+  }
+}
+
+export const changePlayerName = (player, name) => {
+  return dispatch => {
+    if(player==="1") dispatch({type: "CHANGE_PLAYER_1_NAME", payload: name})
+    if(player==="2") dispatch({type: "CHANGE_PLAYER_2_NAME", payload: name})
+  }
+}
+
+export const loadMoviesByGenre = (genre_id) => {
+  return dispatch => {
+    return axios.get(`${API_BASE}/genre/${genre_id}/movies?api_key=${API_KEY}&language=en-US&include_adult=false&sort_by=created_at.asc`)
+    .then(response => response.data.results)
+    .then(movies => dispatch({type: 'LOAD_MOVIES_BY_GENRE_COMPLETED', payload: movies}))
+  }
+}

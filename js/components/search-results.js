@@ -30,7 +30,6 @@ function mapDispatchToProps(dispatch){
   return bindActionCreators({searchMovies: searchMovies}, dispatch)
 }
 function mapStateToProps(state){
-  console.log(state)
   return {
     movies: state.movies.movies
   }

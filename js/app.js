@@ -8,9 +8,9 @@ import { Router, Route, IndexRoute, browserHistory } from 'react-router';
 require('../styles/styles')
 
 import Layout from './components/layout'
-import SearchResults from './components/search-results'
-import MostPopular from './components/most-popular'
-import MovieDetails from './components/movie-details'
+import StartPage from './components/start-page'
+import Categories from './components/categories'
+import GameBoard from './components/game-board'
 
 const store = createStore(reducers, applyMiddleware(thunk));
 
@@ -18,9 +18,11 @@ ReactDOM.render(
   <Provider store={store}>
     <Router history={browserHistory}>
       <Route path="/" component={Layout}>
-        <IndexRoute component={MostPopular}></IndexRoute>
-        <Route path="/search/:query" component={SearchResults}/>
-        <Route path="/details/:id" component={MovieDetails}/>
+        <IndexRoute component={StartPage}></IndexRoute>
+        <Route path="/categories" component={Categories} />
+        <Route path="/categories/:category_id" component={GameBoard} />
+        {/*<Route path="/search/:query" component={SearchResults}/>
+        <Route path="/details/:id" component={MovieDetails}/>*/}
       </Route>
     </Router>
   </Provider>,

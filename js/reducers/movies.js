@@ -5,17 +5,16 @@ const initialState = {
 }
 const moviesReducer = (state=initialState,action) => {
   switch(action.type){
-    case "SEARCH_MOVIES_COMPLETED":{
+    case "LOAD_MOVIES_BY_GENRE_COMPLETED":{
       state = {...state, fetching:false,fetched:true,movies: action.payload};
       break;
     }
-    case "SEARCH_MOVIES_START":{
-      state = {...state, fetching:true}
-      break;
-    }
-    case "GET_MOVIE_COMPLETED":{
-      state = {...state, movies:action.payload,fetching:false,fetched:true}
-      break;
+    case "CLEAR_MOVIES":{
+      state = {
+        fetching: false,
+        fetched: false,
+        movies:[]
+      }
     }
   }
   return state;

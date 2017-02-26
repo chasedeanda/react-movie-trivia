@@ -1,10 +1,16 @@
 import { combineReducers } from 'redux';
 import moviesReducer from './movies.js';
-import mostPopularReducer from './most-popular.js';
+import genreReducer from './genres.js';
+import playersReducer from './players.js';
+import gameReducer from './game.js';
+import questionReducer from './questions.js';
 
 const reducers = combineReducers({
   movies: moviesReducer,
-  mostPopular: mostPopularReducer
+  genres: genreReducer,
+  players: playersReducer,
+  currentGame: gameReducer,
+  questions: questionReducer
 });
 
 const rootReducer = (state,action)=>{
