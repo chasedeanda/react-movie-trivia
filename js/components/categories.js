@@ -29,7 +29,7 @@ class Categories extends React.Component{
         return(
             <div className="row">
                 <div className="center-block text-center">
-                    <h1>Movie Trivia</h1>
+                    <h1>{`${(this.props.game.type==='movie')?"Movie":"TV"} Trivia`}</h1>
                     <span>Select a category</span><br/>
                     <div className="genre-cont">
                      {categories}

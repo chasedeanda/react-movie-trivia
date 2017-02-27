@@ -5,7 +5,7 @@ import {bindActionCreators} from 'redux';
 import {browserHistory} from 'react-router';
 import _ from 'lodash';
 import * as CONSTANTS from '../constants.js';
-const { IMAGE_BASE_BACKDROP,IMAGE_BASE_POSTER } = CONSTANTS;
+const { IMAGE_BASE_BACKDROP,IMAGE_BASE_POSTER,EMPTY_QUESTION_ALTS } = CONSTANTS;
 
 import {getMovie} from '../actions';
 
@@ -82,35 +82,48 @@ class Questions extends React.Component {
                 break;
             }
             case "cast":{
-                question = {
-                    id: this.props.questions.length+1,
-                    type: type,
-                    text: `Who is a lead actor in this ${(this.props.game.type==='movie')?'movie':'tv show'}?`,
-                    correct: null,
-                    assigned_player: this.props.activePlayer,
-                    answer: _.get(selected_movie,'cast[0].name'),
-                    selected_movie: selected_movie,
-                    answered: false,
-                    choice_options: selected_chunk.map((m)=>{
-                                return _.get(m,'cast[0]name')
-                            })
+                const name = (_.get(selected_movie,'cast[0].name')||"").replace('(voice)','');
+                if(name){
+                    question = {
+                        id: this.props.questions.length+1,
+                        type: type,
+                        text: `Who is a lead actor in this ${(this.props.game.type==='movie')?'movie':'tv show'}?`,
+                        correct: null,
+                        assigned_player: this.props.activePlayer,
+                        answer: name,
+                        selected_movie: selected_movie,
+                        answered: false,
+                        choice_options: selected_chunk.map((m)=>{
+                                    let name = (_.get(m,'cast[0]name')||"").replace('(voice)','');
+                                    return (name.length>0)?name:_.shuffle(EMPTY_QUESTION_ALTS)[0]
+                                })
+                    }
+                }else{
+                    this.generateQuestionType()
                 }
+                console.log(question)
                 break;
             }
             case "character":{
-                question = {
-                    id: this.props.questions.length+1,
-                    type: type,
-                    text: `Who is a lead character in this ${(this.props.game.type==='movie')?'movie':'tv show'}?`,
-                    correct: null,
-                    assigned_player: this.props.activePlayer,
-                    answer: this.formatCharacterName(selected_movie),
-                    selected_movie: selected_movie,
-                    answered: false,
-                    choice_options: selected_chunk.map((m)=>{
-                                return this.formatCharacterName(m)
-                            })
+                let character = this.formatCharacterName(selected_movie);
+                if(character){
+                    question = {
+                        id: this.props.questions.length+1,
+                        type: type,
+                        text: `Who is a lead character in this ${(this.props.game.type==='movie')?'movie':'tv show'}?`,
+                        correct: null,
+                        assigned_player: this.props.activePlayer,
+                        answer: character,
+                        selected_movie: selected_movie,
+                        answered: false,
+                        choice_options: selected_chunk.map((m)=>{
+                                    return this.formatCharacterName(m)
+                                })
+                    }
+                }else{
+                    this.generateQuestionType()
                 }
+                console.log(question)
                 break;
             }
         }
@@ -120,9 +133,18 @@ class Questions extends React.Component {
         this.props.createQuestion(question);
     }
     formatCharacterName(selected_movie){
-        return (_.get(selected_movie,'cast[0].character.toLowerCase().indexOf("himself")')>-1||_.get(selected_movie,'cast[0].character.toLowerCase().indexOf("herself")')>-1||_.get(selected_movie,'cast[0].character.toLowerCase().indexOf("narrator")')>-1)?
-        _.get(selected_movie,'cast[0].name')
-        : _.get(selected_movie,'cast[0].character')
+        let character = _.get(selected_movie,'cast[0].name')||"",
+              name = _.get(selected_movie,'cast[0].name')||"",
+              option;
+        if(character.toLowerCase().indexOf("himself")>-1||character.toLowerCase().indexOf("herself")>-1||character.toLowerCase().indexOf("narrator")>-1){
+            option = name.replace(" (voice)","")
+        }else{
+         option = character.replace(" (voice)","")
+        }
+        if(option.length===0){
+            option = _.shuffle(EMPTY_QUESTION_ALTS)[0]
+        }
+        return option;
     }
     updateQuestionsAnswered(question){
         this.setState({
@@ -147,8 +169,8 @@ class Questions extends React.Component {
             player_score: correct
         })
     }
-    playAgain(){
-        browserHistory.push("/categories")
+    goTo(route){
+        browserHistory.push(route)
     }
     generateQuestionType(){
         let questionTypes = ["title","summary","cast","character"]
@@ -170,7 +192,10 @@ class Questions extends React.Component {
                     <div>
                         <h1 className="text-center">You got {this.state.player_score} out {this.props.qty} correct</h1>
                         <QuestionGallery questions={this.props.questions}/>
-                        <button className="btn-lg btn-success center-block" onClick={this.playAgain}>Play Again</button>
+                        <div className="col-md-6 col-sm-6 center-block text-center">
+                            <button className="btn-lg btn-success" onClick={this.goTo.bind(null,"/categories")}>Play Again</button>
+                            <button className="btn-lg btn-danger" style={{marginLeft:'20px'}} onClick={this.goTo.bind(null,'/')}>Main Menu</button>
+                        </div>
                     </div>}
             </div>
         )
