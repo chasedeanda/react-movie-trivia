@@ -1,7 +1,12 @@
 # react-movie-trivia
+Movie and TV trivia game based off of genres. Uses [The Movie Database (TMDb) API](https://www.themoviedb.org/?language=en) to gather movie and tv data based on genre then dynamically creates a unique set of questions each round.
+
+*Built with React/Webpack/redux/express.*
+
 ***To Run:***
-- Download or clone repo
-- Run:
+- [Install Node and npm](http://blog.teamtreehouse.com/install-node-js-npm-mac)
+- Download or clone this repo
+- Run in terminal:
 ```
 npm install
 npm run dev
@@ -10,8 +15,8 @@ npm run dev
 
 
 ## Screenshots
-![screenshot 3](https://cloud.githubusercontent.com/assets/8203134/23344158/1efc6152-fc3d-11e6-9a72-02bd6fb0c30b.png)
-![screenshot 4](https://cloud.githubusercontent.com/assets/8203134/23344159/1f087834-fc3d-11e6-8e75-7486efa51f0b.png)
-![screenshot 6](https://cloud.githubusercontent.com/assets/8203134/23344161/1f0ceeb4-fc3d-11e6-810e-93184fca7ee4.png)
-![screenshot 7](https://cloud.githubusercontent.com/assets/8203134/23344181/6237e798-fc3d-11e6-9a00-01ce154b5efc.png)
-![screenshot 8](https://cloud.githubusercontent.com/assets/8203134/23344195/a2365abe-fc3d-11e6-8726-7ddb7bff9d64.png)
+![screenshot 9](https://cloud.githubusercontent.com/assets/8203134/23446397/8ba09a86-fe08-11e6-8ab0-953f41e685d6.png)
+![screenshot 10](https://cloud.githubusercontent.com/assets/8203134/23446399/8ba281ac-fe08-11e6-954a-e1fb9d2d9be8.png)
+![screenshot 11](https://cloud.githubusercontent.com/assets/8203134/23446398/8ba1f5f2-fe08-11e6-9c1a-4478ffa9eca4.png)
+![screenshot 12](https://cloud.githubusercontent.com/assets/8203134/23446400/8ba7377e-fe08-11e6-929c-c73549be124d.png)
+![screenshot 13](https://cloud.githubusercontent.com/assets/8203134/23446401/8ba93aec-fe08-11e6-96da-916af865bacb.png)
