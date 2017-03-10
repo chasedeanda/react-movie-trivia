@@ -1,5 +1,5 @@
 # React Movie Trivia
-Movie and TV trivia game based off of genres. Uses [The Movie Database (TMDb) API](https://www.themoviedb.org/?language=en) to gather movie and tv data and then dynamically creates a unique set of questions each round. Features four different game modes: **Easy, Normal, Hard** and **Expert** and two game modes: **Movie** and **TV**.
+Movie and TV trivia game based off of genres. Uses [The Movie Database (TMDb) API](https://www.themoviedb.org/?language=en) to gather movie and tv data and then dynamically creates a unique set of questions each round. Features four different difficulties: **Easy, Normal, Hard** and **Expert** and two game modes: **Movie** and **TV**.
 
 *Built with React/Webpack/redux/express.*
 
